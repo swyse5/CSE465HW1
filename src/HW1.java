@@ -36,7 +36,7 @@ public class HW1 {
 					}
 					
 					// check if the right side of argument is a variable or a value
-					else if(variables.get(rightSide) != null) {
+					else if(isDeclared(rightSide)) {
 						value = (int) variables.get(rightSide);
 						variables.put(varName, value);
 					} else {
@@ -51,21 +51,31 @@ public class HW1 {
 					rightSide = split[2];
 					int value;
 					// check if the right side of argument is a variable or a value
-					if(variables.get(rightSide) != null) {
+					if(isDeclared(rightSide)) {
 						if(variables.get(rightSide) instanceof String) {
+							// if the value is a string, concatenate with the original value
 							String strValue = (String) variables.get(rightSide);
-							strValue += variables.get(varName);
-							variables.put(varName, strValue);
+							String origValue = (String) variables.get(varName);
+							String newValue = origValue + strValue;
+							newValue = newValue.replace("\"\"", ""); // removes the quotes from the middle of the new string
+							variables.put(varName, newValue);
 						}
 						else if(variables.get(rightSide) instanceof Integer) {
+							// if the value is an integer, add the new value to the original value
 							value = (int) variables.get(rightSide);
 							value += (int) variables.get(varName);
 							variables.put(varName, value);
 						}
 					} else {
-						value = Integer.parseInt(rightSide);
-						value += (int) variables.get(varName);
-						variables.put(varName, value);
+						// if the right side is a number, simply add that to the existing value
+						// first, check to make sure variable has been declared already
+						if(isDeclared(varName) == false) {
+							System.out.println("Error: Variable not declared. Cannot add to non-existing varaible.");
+						} else {
+							value = Integer.parseInt(rightSide);
+							value += (int) variables.get(varName);
+							variables.put(varName, value);
+						}
 					}
 				}
 				
@@ -74,12 +84,17 @@ public class HW1 {
 					varName = split[0];
 					rightSide = split[2];
 					int value;
-					// check if the right side of argument is a variable or a value
-					if(variables.get(rightSide) != null) {
-						value = (int) variables.get(rightSide);
-					} else value = Integer.parseInt(rightSide);
-					value *= (int) variables.get(varName);
-					variables.put(varName, value);
+					// ensure variable has already been declared and is in hashmap
+					if(isDeclared(varName) == false) {
+						System.out.println("Error: Variable not declared. Cannot multiply by non-existing variable.");
+					} else {
+						// check if the right side of argument is a variable or a value
+						if(isDeclared(rightSide)) {
+							value = (int) variables.get(rightSide);
+						} else value = Integer.parseInt(rightSide);
+						value *= (int) variables.get(varName);
+						variables.put(varName, value);
+					}
 				}
 				
 				// to handle -= compound assignment
@@ -87,19 +102,24 @@ public class HW1 {
 					varName = split[0];
 					rightSide = split[2];
 					int value;
-					// check if the right side of argument is a variable or a value
-					if(variables.get(rightSide) != null) {
-						value = (int) variables.get(rightSide);
-					} else value = Integer.parseInt(rightSide);
-					value -= (int) variables.get(varName);
-					variables.put(varName, value);
+					if(isDeclared(varName) == false) {
+						System.out.println("Error: Variable not declared. Cannot subtract from non-existing variable.");
+					} else {
+						// check if the right side of argument is a variable or a value
+						if(isDeclared(rightSide)) {
+							value = (int) variables.get(rightSide);
+						} else value = Integer.parseInt(rightSide);
+						int oldValue = (int) variables.get(varName);
+						int newValue = oldValue - value;
+						variables.put(varName, newValue);
+					}
 				}
 
 				// print the value of the variable for PRINT statement
 				else if(split[0].equals("PRINT")) {
 					rightSide = split[1];
-					//ensure variable has been declared before trying to print it
-					if(variables.get(rightSide) != null) {
+					// ensure variable has been declared before trying to print it
+					if(isDeclared(rightSide)) {
 						if(variables.get(rightSide) instanceof String) {
 							String strValue = (String) variables.get(rightSide);
 							System.out.println(strValue);
@@ -109,20 +129,21 @@ public class HW1 {
 						}
 					} else System.out.println("Error: Variable not declared. Cannot call \'PRINT\' method.");
 				}
-				System.out.println(variables);
+				
+				//System.out.println(variables);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
-//	Not currently being used
-//	public static boolean isDeclared(String varName) {
-//		boolean found = false;
-//		if(variables.get(varName) != null) {
-//			found = true;
-//		}	
-//		return found;
-//	}
+	// a simple method to check if a variable has already been declared and in the hashmap
+	public static boolean isDeclared(String varName) {
+		boolean found = false;
+		if(variables.get(varName) != null) {
+			found = true;
+		}	
+		return found;
+	}
 
 }
