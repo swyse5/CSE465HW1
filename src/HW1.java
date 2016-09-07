@@ -12,12 +12,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class HW1 {
-	public static HashMap<String, Integer> variables = new HashMap();
+	public static HashMap<String, Object> variables = new HashMap();
 
 	public static void main(String[] args) {
 		try {
 			Scanner in = new Scanner(System.in);
-			File file = new File("prog1.zpm");
+			File file = new File("prog2.zpm");
 			in = new Scanner(file);
 	
 			while(in.hasNextLine()) {
@@ -25,15 +25,24 @@ public class HW1 {
 				String[] split = line.split(" ");
 				String rightSide, varName;
 				
+				// to handle variable declarations
 				if(split[1].equals("=")) {
 					varName = split[0];
 					rightSide = split[2];
 					int value;
+					
+					if(rightSide.contains("\"")) {
+						variables.put(varName, rightSide);
+					}
+					
 					// check if the right side of argument is a variable or a value
-					if(variables.get(rightSide) != null) {
-						value = variables.get(rightSide);
-					} else value = Integer.parseInt(rightSide);
-					variables.put(varName, (value));
+					else if(variables.get(rightSide) != null) {
+						value = (int) variables.get(rightSide);
+						variables.put(varName, value);
+					} else {
+						value = Integer.parseInt(rightSide);
+						variables.put(varName, value);
+					}
 				}
 
 				// to handle += compound assignment
@@ -43,10 +52,21 @@ public class HW1 {
 					int value;
 					// check if the right side of argument is a variable or a value
 					if(variables.get(rightSide) != null) {
-						value = variables.get(rightSide);
-					} else value = Integer.parseInt(rightSide);
-					value += variables.get(varName);
-					variables.put(varName, value);
+						if(variables.get(rightSide) instanceof String) {
+							String strValue = (String) variables.get(rightSide);
+							strValue += variables.get(varName);
+							variables.put(varName, strValue);
+						}
+						else if(variables.get(rightSide) instanceof Integer) {
+							value = (int) variables.get(rightSide);
+							value += (int) variables.get(varName);
+							variables.put(varName, value);
+						}
+					} else {
+						value = Integer.parseInt(rightSide);
+						value += (int) variables.get(varName);
+						variables.put(varName, value);
+					}
 				}
 				
 				// to handle *= compound assignment
@@ -56,9 +76,9 @@ public class HW1 {
 					int value;
 					// check if the right side of argument is a variable or a value
 					if(variables.get(rightSide) != null) {
-						value = variables.get(rightSide);
+						value = (int) variables.get(rightSide);
 					} else value = Integer.parseInt(rightSide);
-					value *= variables.get(varName);
+					value *= (int) variables.get(varName);
 					variables.put(varName, value);
 				}
 				
@@ -69,18 +89,26 @@ public class HW1 {
 					int value;
 					// check if the right side of argument is a variable or a value
 					if(variables.get(rightSide) != null) {
-						value = variables.get(rightSide);
+						value = (int) variables.get(rightSide);
 					} else value = Integer.parseInt(rightSide);
-					value -= variables.get(varName);
+					value -= (int) variables.get(varName);
 					variables.put(varName, value);
 				}
 
 				// print the value of the variable for PRINT statement
 				else if(split[0].equals("PRINT")) {
-					int value = variables.get(split[1]);
-					System.out.println(value);
+					rightSide = split[1];
+					//ensure variable has been declared before trying to print it
+					if(variables.get(rightSide) != null) {
+						if(variables.get(rightSide) instanceof String) {
+							String strValue = (String) variables.get(rightSide);
+							System.out.println(strValue);
+						} else if(variables.get(rightSide) instanceof Integer) {
+							int value = (int) variables.get(split[1]);
+							System.out.println(value);
+						}
+					} else System.out.println("Error: Variable not declared. Cannot call \'PRINT\' method.");
 				}
-				
 				System.out.println(variables);
 			}
 		} catch (FileNotFoundException e) {
