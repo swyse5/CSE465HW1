@@ -18,12 +18,20 @@ public class HW1 {
 	public static void main(String[] args) {
 		try {
 			Scanner in = new Scanner(System.in);
-			System.out.print("Enter .zpm file to interpret: ");
-			String fileName = in.nextLine();
-			File file = new File(fileName);
-			in = new Scanner(file);
-	
+			if(args.length > 0) {
+				String fileName = args[0];
+				File file = new File(fileName);
+				in = new Scanner(file);
+			} else {
+				System.err.println("ERROR: File name missing.");
+				System.exit(0);
+			}
+			
+			// this counter is to show line #s of runtime errors
+			int count = 0;
+			
 			while(in.hasNextLine()) {
+				count++;
 				String line = in.nextLine();
 				String[] split = line.split(" ");
 				String rightSide, varName;
@@ -73,7 +81,7 @@ public class HW1 {
 						// if the right side is a number, simply add that to the existing value
 						// first, check to make sure variable has been declared already
 						if(isDeclared(varName) == false) {
-							System.out.println("Error: Variable not declared. Cannot add to non-existing varaible.");
+							System.err.println("RUNTIME ERROR: line " + count);
 						} else {
 							value = Integer.parseInt(rightSide);
 							value += (int) variables.get(varName);
@@ -89,7 +97,7 @@ public class HW1 {
 					int value;
 					// ensure variable has already been declared and is in hashmap
 					if(isDeclared(varName) == false) {
-						System.out.println("Error: Variable not declared. Cannot multiply by non-existing variable.");
+						System.err.println("RUNTIME ERROR: line " + count);
 					} else {
 						// check if the right side of argument is a variable or a value
 						if(isDeclared(rightSide)) {
@@ -106,7 +114,7 @@ public class HW1 {
 					rightSide = split[2];
 					int value;
 					if(isDeclared(varName) == false) {
-						System.out.println("Error: Variable not declared. Cannot subtract from non-existing variable.");
+						System.err.println("RUNTIME ERROR: line " + count);
 					} else {
 						// check if the right side of argument is a variable or a value
 						if(isDeclared(rightSide)) {
@@ -125,21 +133,22 @@ public class HW1 {
 					if(isDeclared(rightSide)) {
 						if(variables.get(rightSide) instanceof String) {
 							String strValue = (String) variables.get(rightSide);
-							System.out.println(strValue);
+							System.out.println(rightSide + "=" + strValue.replace("\"", ""));
 						} else if(variables.get(rightSide) instanceof Integer) {
 							int value = (int) variables.get(split[1]);
-							System.out.println(value);
+							System.out.println(rightSide + "=" + value);
 						}
-					} else System.out.println("Error: Variable not declared. Cannot call \'PRINT\' method.");
+					} else System.err.println("RUNTIME ERROR: line " + count);
 				}
+				
 				// TODO: implement FOR loop handling
 				else if(split[0].equals("FOR")) {
-					System.out.println("Error: Program does not handle FOR loops.");
+					System.err.println("Error: Program does not handle FOR loops.");
 				}
 				
 				// any other statement is not valid
 				else {
-					System.out.println("Error: Invalid statement.");
+					System.err.println("RUNTIME ERROR: line " + count);
 				}
 				
 			}
