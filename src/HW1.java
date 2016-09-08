@@ -4,6 +4,7 @@
  * Due 9/8/16
  * 
  * This program is meant to read in a z+- file and interpret it.
+ * It handles Integer and String variables, and PRINT statements.
  */
 
 import java.util.HashMap;
@@ -17,7 +18,9 @@ public class HW1 {
 	public static void main(String[] args) {
 		try {
 			Scanner in = new Scanner(System.in);
-			File file = new File("prog2.zpm");
+			System.out.print("Enter .zpm file to interpret: ");
+			String fileName = in.nextLine();
+			File file = new File(fileName);
 			in = new Scanner(file);
 	
 			while(in.hasNextLine()) {
@@ -129,21 +132,25 @@ public class HW1 {
 						}
 					} else System.out.println("Error: Variable not declared. Cannot call \'PRINT\' method.");
 				}
+				// TODO: implement FOR loop handling
+				else if(split[0].equals("FOR")) {
+					System.out.println("Error: Program does not handle FOR loops.");
+				}
 				
-				//System.out.println(variables);
+				// any other statement is not valid
+				else {
+					System.out.println("Error: Invalid statement.");
+				}
+				
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	// a simple method to check if a variable has already been declared and in the hashmap
+	// a simple method to check if a variable has already been declared and is in the hashmap
 	public static boolean isDeclared(String varName) {
-		boolean found = false;
-		if(variables.get(varName) != null) {
-			found = true;
-		}	
-		return found;
+		return variables.get(varName) != null;
 	}
 
 }
