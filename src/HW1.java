@@ -23,7 +23,7 @@ public class HW1 {
 				File file = new File(fileName);
 				in = new Scanner(file);
 			} else {
-				System.err.println("ERROR: File name missing.");
+				System.err.println("ERROR: File name missing.\n");
 				System.exit(0);
 			}
 			
@@ -81,7 +81,7 @@ public class HW1 {
 						// if the right side is a number, simply add that to the existing value
 						// first, check to make sure variable has been declared already
 						if(isDeclared(varName) == false) {
-							System.err.println("RUNTIME ERROR: line " + count);
+							System.err.println("RUNTIME ERROR: line " + count + "\n");
 						} else {
 							value = Integer.parseInt(rightSide);
 							value += (int) variables.get(varName);
@@ -97,7 +97,7 @@ public class HW1 {
 					int value;
 					// ensure variable has already been declared and is in hashmap
 					if(isDeclared(varName) == false) {
-						System.err.println("RUNTIME ERROR: line " + count);
+						System.err.println("RUNTIME ERROR: line " + count + "\n");
 					} else {
 						// check if the right side of argument is a variable or a value
 						if(isDeclared(rightSide)) {
@@ -114,7 +114,7 @@ public class HW1 {
 					rightSide = split[2];
 					int value;
 					if(isDeclared(varName) == false) {
-						System.err.println("RUNTIME ERROR: line " + count);
+						System.err.println("RUNTIME ERROR: line " + count + "\n");
 					} else {
 						// check if the right side of argument is a variable or a value
 						if(isDeclared(rightSide)) {
@@ -138,17 +138,17 @@ public class HW1 {
 							int value = (int) variables.get(split[1]);
 							System.out.println(rightSide + "=" + value);
 						}
-					} else System.err.println("RUNTIME ERROR: line " + count);
+					} else System.err.println("RUNTIME ERROR: line " + count + "\n");
 				}
 				
 				// TODO: implement FOR loop handling
 				else if(split[0].equals("FOR")) {
-					System.err.println("Error: Program does not handle FOR loops.");
+					System.err.println("RUNTIME ERROR: line " + count + ". Program does not handle FOR loops.\n");
 				}
 				
 				// any other statement is not valid
 				else {
-					System.err.println("RUNTIME ERROR: line " + count);
+					System.err.println("RUNTIME ERROR: line " + count + "\n");
 				}
 				
 			}
